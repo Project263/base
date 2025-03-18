@@ -19,6 +19,10 @@ func InitPostgres(cfg *config.Config) error {
 
 	pool, err := pgxpool.New(ctx, cfg.POSTGRES_DSN)
 
+	if err != nil {
+		return fmt.Errorf("ошибка подключения к базе данных: %w", err)
+	}
+
 	err = pool.Ping(ctx)
 
 	if err != nil {
