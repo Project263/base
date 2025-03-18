@@ -7,13 +7,14 @@ import (
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"theAesthetics.ru/base/internal/logger"
 )
 
 func InitPostgres() *sql.DB {
 	err := godotenv.Load()
 
 	if err != nil {
-		fmt.Println("Ошибка загрузки .env")
+		logger.Log.Error("Ошибка загрузки .env")
 	}
 
 	host := os.Getenv("HOST")
@@ -29,6 +30,7 @@ func InitPostgres() *sql.DB {
 	DB, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		fmt.Println(err.Error())
+		logger.Log.Error(err.Error())
 		panic("База данных нихуя не работает")
 	}
 
