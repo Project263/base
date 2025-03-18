@@ -1,70 +1,72 @@
 package storage
 
 import (
-	"database/sql"
+	"context"
 	"fmt"
 	"log"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // Выполнение SQL-запроса с проверкой ошибки
-func execQuery(db *sql.DB, query string) error {
-	_, err := db.Exec(query)
+func execQuery(pool *pgxpool.Pool, query string) error {
+	_, err := pool.Exec(context.Background(), query)
 	if err != nil {
 		return fmt.Errorf("ошибка выполнения запроса: %w", err)
 	}
 	return nil
 }
 
-func InitTables(db *sql.DB) {
+func InitTables(pool *pgxpool.Pool) {
 	// Создание всех таблиц
-	if err := createUsersTable(db); err != nil {
+	if err := createUsersTable(pool); err != nil {
 		log.Fatalf("Ошибка создания таблицы users: %v", err)
 	}
-	if err := createAchievementsTable(db); err != nil {
+	if err := createAchievementsTable(pool); err != nil {
 		log.Fatalf("Ошибка создания таблицы achievements: %v", err)
 	}
-	if err := createUsersAchievementsTable(db); err != nil {
+	if err := createUsersAchievementsTable(pool); err != nil {
 		log.Fatalf("Ошибка создания таблицы users_achievements: %v", err)
 	}
-	if err := createMusclesTable(db); err != nil {
+	if err := createMusclesTable(pool); err != nil {
 		log.Fatalf("Ошибка создания таблицы muscles: %v", err)
 	}
-	if err := createExercisesTable(db); err != nil {
+	if err := createExercisesTable(pool); err != nil {
 		log.Fatalf("Ошибка создания таблицы exercises: %v", err)
 	}
-	if err := createEquipmentsTable(db); err != nil {
+	if err := createEquipmentsTable(pool); err != nil {
 		log.Fatalf("Ошибка создания таблицы equipments: %v", err)
 	}
-	if err := createTrainsTable(db); err != nil {
+	if err := createTrainsTable(pool); err != nil {
 		log.Fatalf("Ошибка создания таблицы trains: %v", err)
 	}
-	if err := createTrainsExercisesTable(db); err != nil {
+	if err := createTrainsExercisesTable(pool); err != nil {
 		log.Fatalf("Ошибка создания таблицы trains_exercises: %v", err)
 	}
-	if err := createExercisesHelpMuscleTable(db); err != nil {
+	if err := createExercisesHelpMuscleTable(pool); err != nil {
 		log.Fatalf("Ошибка создания таблицы exercises_help_muscle: %v", err)
 	}
-	if err := createTrainHelpMuscleTable(db); err != nil {
+	if err := createTrainHelpMuscleTable(pool); err != nil {
 		log.Fatalf("Ошибка создания таблицы train_help_muscle: %v", err)
 	}
 
 	// Создание всех связей между таблицами
-	if err := createExercisesRelations(db); err != nil {
+	if err := createExercisesRelations(pool); err != nil {
 		log.Fatalf("Ошибка создания связей для таблицы exercises: %v", err)
 	}
-	if err := createTrainsExercisesRelations(db); err != nil {
+	if err := createTrainsExercisesRelations(pool); err != nil {
 		log.Fatalf("Ошибка создания связей для таблицы trains_exercises: %v", err)
 	}
-	if err := createUsersAchievementsRelations(db); err != nil {
+	if err := createUsersAchievementsRelations(pool); err != nil {
 		log.Fatalf("Ошибка создания связей для таблицы users_achievements: %v", err)
 	}
-	if err := createTrainsRelations(db); err != nil {
+	if err := createTrainsRelations(pool); err != nil {
 		log.Fatalf("Ошибка создания связей для таблицы trains: %v", err)
 	}
-	if err := createExercisesHelpMuscleRelations(db); err != nil {
+	if err := createExercisesHelpMuscleRelations(pool); err != nil {
 		log.Fatalf("Ошибка создания связей для таблицы exercises_help_muscle: %v", err)
 	}
-	if err := createTrainHelpMuscleRelations(db); err != nil {
+	if err := createTrainHelpMuscleRelations(pool); err != nil {
 		log.Fatalf("Ошибка создания связей для таблицы train_help_muscle: %v", err)
 	}
 
@@ -72,7 +74,7 @@ func InitTables(db *sql.DB) {
 }
 
 // Таблица пользователей
-func createUsersTable(db *sql.DB) error {
+func createUsersTable(pool *pgxpool.Pool) error {
 	query := `
     CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -95,11 +97,11 @@ func createUsersTable(db *sql.DB) error {
         created_at BIGINT,
         update_at BIGINT
     );`
-	return execQuery(db, query)
+	return execQuery(pool, query)
 }
 
 // Таблица достижений
-func createAchievementsTable(db *sql.DB) error {
+func createAchievementsTable(pool *pgxpool.Pool) error {
 	query := `
     CREATE TABLE IF NOT EXISTS achievements (
         id SERIAL PRIMARY KEY,
@@ -107,33 +109,33 @@ func createAchievementsTable(db *sql.DB) error {
         description VARCHAR UNIQUE NOT NULL,
         image VARCHAR NOT NULL
     );`
-	return execQuery(db, query)
+	return execQuery(pool, query)
 }
 
 // Таблица достижений пользователей
-func createUsersAchievementsTable(db *sql.DB) error {
+func createUsersAchievementsTable(pool *pgxpool.Pool) error {
 	query := `
     CREATE TABLE IF NOT EXISTS users_achievements (
         id SERIAL PRIMARY KEY,
         user_id INT REFERENCES users(id),
         achievement_id INT REFERENCES achievements(id)
     );`
-	return execQuery(db, query)
+	return execQuery(pool, query)
 }
 
 // Таблица мышц
-func createMusclesTable(db *sql.DB) error {
+func createMusclesTable(pool *pgxpool.Pool) error {
 	query := `
     CREATE TABLE IF NOT EXISTS muscles (
         id SERIAL PRIMARY KEY,
         title VARCHAR UNIQUE NOT NULL,
         image VARCHAR UNIQUE NOT NULL
     );`
-	return execQuery(db, query)
+	return execQuery(pool, query)
 }
 
 // Таблица упражнений
-func createExercisesTable(db *sql.DB) error {
+func createExercisesTable(pool *pgxpool.Pool) error {
 	query := `
     CREATE TABLE IF NOT EXISTS exercises (
         id SERIAL PRIMARY KEY,
@@ -147,22 +149,22 @@ func createExercisesTable(db *sql.DB) error {
         difficult INT NOT NULL,
         lead_muscle_id INT NOT NULL
     );`
-	return execQuery(db, query)
+	return execQuery(pool, query)
 }
 
 // Таблица оборудования
-func createEquipmentsTable(db *sql.DB) error {
+func createEquipmentsTable(pool *pgxpool.Pool) error {
 	query := `
     CREATE TABLE IF NOT EXISTS equipments (
         id SERIAL PRIMARY KEY,
         title VARCHAR UNIQUE NOT NULL,
         image VARCHAR UNIQUE NOT NULL
     );`
-	return execQuery(db, query)
+	return execQuery(pool, query)
 }
 
 // Таблица тренировок
-func createTrainsTable(db *sql.DB) error {
+func createTrainsTable(pool *pgxpool.Pool) error {
 	query := `
     CREATE TABLE IF NOT EXISTS trains (
         id SERIAL PRIMARY KEY,
@@ -174,97 +176,97 @@ func createTrainsTable(db *sql.DB) error {
         duration_train INT,
         lead_muscle_id INT NOT NULL
     );`
-	return execQuery(db, query)
+	return execQuery(pool, query)
 }
 
 // Таблица упражнений в тренировках
-func createTrainsExercisesTable(db *sql.DB) error {
+func createTrainsExercisesTable(pool *pgxpool.Pool) error {
 	query := `
     CREATE TABLE IF NOT EXISTS trains_exercises (
         id SERIAL PRIMARY KEY,
         train_id INT REFERENCES trains(id),
         exercise_id INT REFERENCES exercises(id)
     );`
-	return execQuery(db, query)
+	return execQuery(pool, query)
 }
 
 // Таблица вспомогательных мышц упражнений
-func createExercisesHelpMuscleTable(db *sql.DB) error {
+func createExercisesHelpMuscleTable(pool *pgxpool.Pool) error {
 	query := `
     CREATE TABLE IF NOT EXISTS exercises_help_muscle (
         id SERIAL PRIMARY KEY,
         exercise_id INT REFERENCES exercises(id),
         help_muscle_id INT REFERENCES muscles(id)
     );`
-	return execQuery(db, query)
+	return execQuery(pool, query)
 }
 
 // Таблица вспомогательных мышц тренировок
-func createTrainHelpMuscleTable(db *sql.DB) error {
+func createTrainHelpMuscleTable(pool *pgxpool.Pool) error {
 	query := `
     CREATE TABLE IF NOT EXISTS train_help_muscle (
         id SERIAL PRIMARY KEY,
         train_id INT REFERENCES trains(id),
         help_muscle_id INT REFERENCES muscles(id)
     );`
-	return execQuery(db, query)
+	return execQuery(pool, query)
 }
 
 // Создание связей для таблицы exercises
-func createExercisesRelations(db *sql.DB) error {
+func createExercisesRelations(pool *pgxpool.Pool) error {
 	query := `
     ALTER TABLE exercises 
         ADD FOREIGN KEY (lead_muscle_id) REFERENCES muscles(id),
         ADD FOREIGN KEY (equipment_id) REFERENCES equipments(id);
     `
-	return execQuery(db, query)
+	return execQuery(pool, query)
 }
 
 // Создание связей для таблицы trains_exercises
-func createTrainsExercisesRelations(db *sql.DB) error {
+func createTrainsExercisesRelations(pool *pgxpool.Pool) error {
 	query := `
     ALTER TABLE trains_exercises 
         ADD FOREIGN KEY (train_id) REFERENCES trains(id),
         ADD FOREIGN KEY (exercise_id) REFERENCES exercises(id);
     `
-	return execQuery(db, query)
+	return execQuery(pool, query)
 }
 
 // Создание связей для таблицы users_achievements
-func createUsersAchievementsRelations(db *sql.DB) error {
+func createUsersAchievementsRelations(pool *pgxpool.Pool) error {
 	query := `
     ALTER TABLE users_achievements 
         ADD FOREIGN KEY (user_id) REFERENCES users(id),
         ADD FOREIGN KEY (achievement_id) REFERENCES achievements(id);
     `
-	return execQuery(db, query)
+	return execQuery(pool, query)
 }
 
 // Создание связей для таблицы trains
-func createTrainsRelations(db *sql.DB) error {
+func createTrainsRelations(pool *pgxpool.Pool) error {
 	query := `
     ALTER TABLE trains 
         ADD FOREIGN KEY (lead_muscle_id) REFERENCES muscles(id);
     `
-	return execQuery(db, query)
+	return execQuery(pool, query)
 }
 
 // Создание связей для таблицы exercises_help_muscle
-func createExercisesHelpMuscleRelations(db *sql.DB) error {
+func createExercisesHelpMuscleRelations(pool *pgxpool.Pool) error {
 	query := `
     ALTER TABLE exercises_help_muscle 
         ADD FOREIGN KEY (exercise_id) REFERENCES exercises(id),
         ADD FOREIGN KEY (help_muscle_id) REFERENCES muscles(id);
     `
-	return execQuery(db, query)
+	return execQuery(pool, query)
 }
 
 // Создание связей для таблицы train_help_muscle
-func createTrainHelpMuscleRelations(db *sql.DB) error {
+func createTrainHelpMuscleRelations(pool *pgxpool.Pool) error {
 	query := `
     ALTER TABLE train_help_muscle 
         ADD FOREIGN KEY (train_id) REFERENCES trains(id),
         ADD FOREIGN KEY (help_muscle_id) REFERENCES muscles(id);
     `
-	return execQuery(db, query)
+	return execQuery(pool, query)
 }

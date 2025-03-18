@@ -1,38 +1,32 @@
 package storage
 
 import (
-	"database/sql"
+	"context"
 	"fmt"
-	"os"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
+	"theAesthetics.ru/base/config"
 )
 
-func InitPostgres() *sql.DB {
+func InitPostgres(cfg *config.Config) error {
+	ctx := context.Background()
 	err := godotenv.Load()
 
 	if err != nil {
 		fmt.Println("Ошибка загрузки .env")
 	}
 
-	host := os.Getenv("HOST")
-	port := os.Getenv("PORT")
-	username := os.Getenv("POSTGRES_USERNAME")
-	password := os.Getenv("POSTGRES_PASSWORD")
-	databaseName := os.Getenv("DBNAME")
+	pool, err := pgxpool.New(ctx, cfg.POSTGRES_DSN)
 
-	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, username, password, databaseName)
+	err = pool.Ping(ctx)
 
-	DB, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		fmt.Println(err.Error())
-		panic("База данных нихуя не работает")
+		return fmt.Errorf("ошибка подключения к базе данных: %w", err)
 	}
 
-	InitTables(DB)
+	defer pool.Close()
+	InitTables(pool)
 
-	return DB
+	return nil
 }
