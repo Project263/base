@@ -13,7 +13,7 @@ func main() {
 	}
 	// init logger
 	// init pool
-	DB := storage.InitPostgres(cfg)
-	_ = DB
+	pool := storage.InitPostgres(cfg)
+	_ = pool
 	// run http server
 }
