@@ -1,6 +1,11 @@
 package config
 
-import "github.com/caarlos0/env"
+import (
+	"log"
+
+	"github.com/caarlos0/env"
+	"github.com/joho/godotenv"
+)
 
 type Config struct {
 	Host         string `env:"HOST" envDefault:"9090"`
@@ -10,6 +15,10 @@ type Config struct {
 
 func NewConfig() (*Config, error) {
 	cfg := Config{}
+
+	if err := godotenv.Load(".env"); err != nil {
+		log.Fatalf("Ошибка загрузки .env файла: %v", err)
+	}
 
 	if err := env.Parse(&cfg); err != nil {
 		return nil, err
