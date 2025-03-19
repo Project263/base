@@ -11,6 +11,7 @@ type Config struct {
 	Host         string `env:"HOST" envDefault:"9090"`
 	Port         string `env:"PORT" envDefault:"debug"` //info
 	POSTGRES_DSN string `env:"POSTGRES_DSN" envDefault:"postgresql://user3:password1@localhost:5433/pool1?sslmode=disable"`
+	LogLevel     string `env:"LOG_LEVEL" envDefault:debug`
 }
 
 func NewConfig() (*Config, error) {
