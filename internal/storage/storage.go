@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"theAesthetics.ru/base/config"
+	"theaesthetics.ru/base/config"
 )
 
 func InitPostgres(cfg *config.Config) *pgxpool.Pool {
