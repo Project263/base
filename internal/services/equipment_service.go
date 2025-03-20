@@ -15,6 +15,10 @@ func NewEquipmentService(repo *repository.EquipmentRepository) *EquipmentService
 	return &EquipmentService{repo: repo}
 }
 
-func (s *EquipmentService) GetAll(ctx context.Context) ([]models.Equipment, error) {
-	return s.repo.GetAll(ctx)
+func (s *EquipmentService) GetAllEquipments(ctx context.Context) ([]models.Equipment, error) {
+	return s.repo.GetAllEquipments(ctx)
+}
+
+func (s *EquipmentService) GetEquipmentById(ctx context.Context, id uint8) (*models.Equipment, error) {
+	return s.repo.GetEquipmentById(ctx, id)
 }

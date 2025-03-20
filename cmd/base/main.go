@@ -39,6 +39,7 @@ func main() {
 	eqHandler := handlers.NewEquipmentHandler(eqService)
 
 	api.GET("/equipment", eqHandler.GetAllEquipments)
+	api.GET("/equipment/:id", eqHandler.GetEquipmentById)
 
 	e.Logger.Fatal(e.Start(":" + cfg.Port))
 }
