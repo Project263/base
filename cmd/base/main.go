@@ -39,7 +39,10 @@ func main() {
 	eqHandler := handlers.NewEquipmentHandler(eqService)
 
 	api.GET("/equipment", eqHandler.GetAllEquipments)
+	api.POST("/equipment", eqHandler.CreateEqipment)
 	api.GET("/equipment/:id", eqHandler.GetEquipmentById)
+	api.PUT("/equipment/:id", eqHandler.UpdateEqipment)
+	api.DELETE("/equipment/:id", eqHandler.RemoveEquipment)
 
 	e.Logger.Fatal(e.Start(":" + cfg.Port))
 }

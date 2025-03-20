@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"context"
 	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
+	"theaesthetics.ru/base/internal/models"
 	"theaesthetics.ru/base/internal/services"
 )
 
@@ -52,4 +54,98 @@ func (h *EquipmentHandler) GetEquipmentById(c echo.Context) error {
 		})
 	}
 	return c.JSON(http.StatusOK, equipment)
+}
+
+func (h *EquipmentHandler) CreateEqipment(c echo.Context) error {
+	ctx := context.Background()
+	var equipment models.Equipment
+	err := c.Bind(&equipment)
+
+	if err != nil {
+		logrus.Error(err)
+
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+	}
+
+	err = h.service.CreateEqipment(ctx, equipment.Title, equipment.Image)
+
+	if err != nil {
+		logrus.Error(err)
+
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusCreated, map[string]string{
+		"message": "created",
+	})
+}
+
+func (h *EquipmentHandler) RemoveEquipment(c echo.Context) error {
+	ctx := context.Background()
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		logrus.Error(err)
+
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+	}
+	uid := uint8(id)
+	err = h.service.RemoveEquipment(ctx, uid)
+
+	if err != nil {
+		logrus.Error(err)
+
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "deleted",
+	})
+}
+
+func (h *EquipmentHandler) UpdateEqipment(c echo.Context) error {
+	ctx := context.Background()
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		logrus.Error(err)
+
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+	}
+	uid := uint8(id)
+
+	equipment := models.Equipment{Id: uid}
+	err = c.Bind(&equipment)
+
+	if err != nil {
+		logrus.Error(err)
+
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+	}
+
+	err = h.service.UpdateEquipment(ctx, equipment)
+
+	if err != nil {
+		logrus.Error(err)
+
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusCreated, map[string]string{
+		"message": "updated",
+	})
 }

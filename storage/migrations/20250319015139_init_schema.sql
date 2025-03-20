@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS exercises (
 CREATE TABLE IF NOT EXISTS equipments (
     id SERIAL PRIMARY KEY,
     title VARCHAR UNIQUE NOT NULL,
-    image VARCHAR UNIQUE NOT NULL
+    image VARCHAR
 );
 -- +goose StatementEnd
 
@@ -109,6 +109,15 @@ CREATE TABLE IF NOT EXISTS train_help_muscle (
 -- +goose StatementEnd
 
 -- +goose Down
+
+-- +goose StatementBegin
+DROP TABLE IF EXISTS equipments;
+-- +goose StatementEnd
+
+-- +goose StatementBegin
+DROP TABLE IF EXISTS exercises;
+-- +goose StatementEnd
+
 -- +goose StatementBegin
 DROP TABLE IF EXISTS users;
 -- +goose StatementEnd
@@ -123,14 +132,6 @@ DROP TABLE IF EXISTS users_achievements;
 
 -- +goose StatementBegin
 DROP TABLE IF EXISTS muscles;
--- +goose StatementEnd
-
--- +goose StatementBegin
-DROP TABLE IF EXISTS exercises;
--- +goose StatementEnd
-
--- +goose StatementBegin
-DROP TABLE IF EXISTS equipments;
 -- +goose StatementEnd
 
 -- +goose StatementBegin
