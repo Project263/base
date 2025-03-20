@@ -3,10 +3,12 @@ package main
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/sirupsen/logrus"
 
 	"theaesthetics.ru/base/config"
+	"theaesthetics.ru/base/internal/handlers"
 	"theaesthetics.ru/base/internal/logger"
+	"theaesthetics.ru/base/internal/repository"
+	"theaesthetics.ru/base/internal/services"
 	"theaesthetics.ru/base/internal/storage"
 )
 
@@ -19,7 +21,6 @@ func main() {
 
 	// init logger
 	logger.InitLogger(cfg.LogLevel)
-	logrus.Info("test log")
 
 	// init pool
 	pool := storage.InitPostgres(cfg)
@@ -32,8 +33,12 @@ func main() {
 	}))
 
 	api := e.Group("/api/v1")
-	api.GET("/", func(c echo.Context) error {
-		return c.String(200, "Hello, World!")
-	})
-	e.Logger.Fatal(e.Start(":1323"))
+
+	eqRepo := repository.NewEquipmentRepository(pool)
+	eqService := services.NewEquipmentService(eqRepo)
+	eqHandler := handlers.NewEquipmentHandler(eqService)
+
+	api.GET("/equipment", eqHandler.GetAllEquipments)
+
+	e.Logger.Fatal(e.Start(":" + cfg.Port))
 }
