@@ -41,7 +41,7 @@ jobs:
             rm -f /var/www/myapp/main
             exit || true
       - name: Upload binary
-        uses: appleboy/ssh-action@v0.1.8
+        uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
