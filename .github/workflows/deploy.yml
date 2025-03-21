@@ -38,7 +38,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             mkdir -p /var/www/myapp
-            rm -f /var/www/myapp/main
+            rm -f /var/www/myapp/main/main
             exit || true
       - name: Upload binary
         uses: appleboy/scp-action@v0.1.4
