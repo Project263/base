@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
@@ -11,20 +13,17 @@ import (
 )
 
 func main() {
+	ctx := context.Background()
 	// init config
 	cfg, err := config.NewConfig()
 	if err != nil {
 		panic(err.Error())
 	}
 
-	// init logger
-	logger.InitLogger(cfg.LogLevel)
-
-	// init pool
-	pool := storage.InitPostgres(cfg)
-
-	// run echo server
+	log := logger.InitLogger(cfg.LogLevel)
+	pool := storage.InitPostgres(cfg, ctx, log)
 	e := echo.New()
+
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "method=${method}, uri=${uri}, status=${status}\n",
 	}))

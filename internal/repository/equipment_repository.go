@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"
@@ -51,11 +52,29 @@ func (r *EquipmentRepository) GetEquipmentById(ctx context.Context, id uint8) (*
 }
 
 func (r *EquipmentRepository) CreateEqipment(ctx context.Context, title, image string) error {
-	query := `INSERT INTO equipments (title, image) VALUES ($1, $2)`
-	_, err := r.db.Exec(ctx, query, title, image)
+	tx, err := r.db.Begin(ctx)
+	if err != nil {
+		logrus.Error()
+		return err
+	}
+	defer tx.Rollback(ctx)
+
+	err = checkTitle(tx, ctx, title)
 	if err != nil {
 		logrus.Error(err)
 		return err
+	}
+
+	query := `INSERT INTO equipments (title, image) VALUES ($1, $2)`
+	_, err = r.db.Exec(ctx, query, title, image)
+	if err != nil {
+		logrus.Error(err)
+		return err
+	}
+
+	err = tx.Commit(ctx)
+	if err != nil {
+		return fmt.Errorf("transaction commit failed: %w", err)
 	}
 
 	return nil
@@ -73,11 +92,29 @@ func (r *EquipmentRepository) RemoveEquipment(ctx context.Context, id uint8) err
 }
 
 func (r *EquipmentRepository) UpdateEquipment(ctx context.Context, equipment models.Equipment) error {
-	query := `UPDATE equipments SET title = $1, image = $2 WHERE id = $3`
-	_, err := r.db.Exec(ctx, query, equipment.Title, equipment.Image, equipment.Id)
+	tx, err := r.db.Begin(ctx)
+	if err != nil {
+		logrus.Error()
+		return err
+	}
+	defer tx.Rollback(ctx)
+
+	err = checkTitle(tx, ctx, equipment.Title)
 	if err != nil {
 		logrus.Error(err)
 		return err
+	}
+
+	query := `UPDATE equipments SET title = $1, image = $2 WHERE id = $3`
+	_, err = r.db.Exec(ctx, query, equipment.Title, equipment.Image, equipment.Id)
+	if err != nil {
+		logrus.Error(err)
+		return err
+	}
+
+	err = tx.Commit(ctx)
+	if err != nil {
+		return fmt.Errorf("transaction commit failed: %w", err)
 	}
 
 	return nil

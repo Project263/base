@@ -20,7 +20,8 @@ func NewEquipmentHandler(service *services.EquipmentService) *EquipmentHandler {
 }
 
 func (h *EquipmentHandler) GetAllEquipments(c echo.Context) error {
-	equipments, err := h.service.GetAllEquipments(c.Request().Context())
+	ctx := c.Request().Context()
+	equipments, err := h.service.GetAllEquipments(ctx)
 	if err != nil {
 		logrus.Error(err)
 
@@ -33,8 +34,8 @@ func (h *EquipmentHandler) GetAllEquipments(c echo.Context) error {
 }
 
 func (h *EquipmentHandler) GetEquipmentById(c echo.Context) error {
-	id, err := strconv.Atoi(c.Param("id"))
 	ctx := c.Request().Context()
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		logrus.Error(err)
 
@@ -96,7 +97,7 @@ func (h *EquipmentHandler) RemoveEquipment(c echo.Context) error {
 		})
 	}
 	uid := uint8(id)
-	err = h.service.RemoveEquipment(ctx, uid)
+	err = h.service.DeleteEquipment(ctx, uid)
 
 	if err != nil {
 		logrus.Error(err)

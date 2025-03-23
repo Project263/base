@@ -27,8 +27,8 @@ func (s *EquipmentService) CreateEqipment(ctx context.Context, title, image stri
 	return s.repo.CreateEqipment(ctx, title, image)
 }
 
-func (s *EquipmentService) RemoveEquipment(ctx context.Context, id uint8) error {
-	return s.repo.RemoveEquipment(ctx, id)
+func (s *EquipmentService) DeleteEquipment(ctx context.Context, id uint8) error {
+	return s.repo.DeleteEquipment(ctx, id)
 }
 
 func (s *EquipmentService) UpdateEquipment(ctx context.Context, equipment models.Equipment) error {
