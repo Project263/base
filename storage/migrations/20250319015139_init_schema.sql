@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS achievements (
     id SERIAL PRIMARY KEY,
     title VARCHAR UNIQUE NOT NULL,
-    description VARCHAR UNIQUE NOT NULL,
+    description VARCHAR NOT NULL,
     image VARCHAR NOT NULL
 );
 -- +goose StatementEnd
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS users_achievements (
 CREATE TABLE IF NOT EXISTS muscles (
     id SERIAL PRIMARY KEY,
     title VARCHAR UNIQUE NOT NULL,
-    image VARCHAR UNIQUE NOT NULL
+    image VARCHAR NOT NULL
 );
 -- +goose StatementEnd
 
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS trains (
     image VARCHAR,
     video_url VARCHAR,
     difficult INT,
-    duration_train INT,
+    duration_time INT,
     lead_muscle_id INT NOT NULL
 );
 -- +goose StatementEnd

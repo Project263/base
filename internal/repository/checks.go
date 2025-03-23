@@ -6,6 +6,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/sirupsen/logrus"
+	"theaesthetics.ru/base/internal/models"
 )
 
 // checkTitle проверяет уникальность названия в переданной таблице
@@ -22,6 +23,20 @@ func checkTitle(tx pgx.Tx, ctx context.Context, title string, table string) erro
 
 	if err != pgx.ErrNoRows {
 		return err
+	}
+
+	return nil
+}
+
+func checkMuscles(tx pgx.Tx, ctx context.Context, id uint8) error {
+	// Безопасно подставляем имя таблицы
+	query := `SELECT * FROM muscles WHERE id = $1`
+	logrus.Info("Проверяем нахождение в таблице:", id)
+
+	var muscle models.Muscles
+	err := tx.QueryRow(ctx, query, id).Scan(&muscle)
+	if err == pgx.ErrNoRows {
+		return fmt.Errorf("muscle with id: '%v' not exists", id)
 	}
 
 	return nil

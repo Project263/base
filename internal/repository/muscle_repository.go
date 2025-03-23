@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/sirupsen/logrus"
 	"theaesthetics.ru/base/internal/models"
 )
 
@@ -55,7 +54,6 @@ func (r *MusclesRepository) GetMusclesById(ctx context.Context, id uint8) (*mode
 func (r *MusclesRepository) CreateMuscles(ctx context.Context, title, image string) error {
 	tx, err := r.db.Begin(ctx)
 	if err != nil {
-		logrus.Error()
 		return err
 	}
 	defer tx.Rollback(ctx)
@@ -92,7 +90,6 @@ func (r *MusclesRepository) DeleteMuscles(ctx context.Context, id uint8) error {
 func (r *MusclesRepository) UpdateMuscles(ctx context.Context, Muscles models.Muscles) error {
 	tx, err := r.db.Begin(ctx)
 	if err != nil {
-		logrus.Error()
 		return err
 	}
 	defer tx.Rollback(ctx)
