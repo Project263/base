@@ -22,7 +22,11 @@ jobs:
 
       # Сборка бинарника
       - name: Build binary
-        run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main ./cmd/app
+        run: |
+          pwd
+          ls -la
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main ./cmd/base
+
 
       # Подключение к серверу по SSH и деплой
       - name: Deploy to Server
@@ -31,10 +35,10 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           port: ${{ secrets.PORT }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.SSH_PASSWORD }}
           script: |
             mkdir -p /var/www/myapp
-            rm -f /var/www/myapp/main
+            rm -f /var/www/myapp/main/main
             exit || true
       - name: Upload binary
         uses: appleboy/scp-action@v0.1.4
@@ -42,7 +46,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           port: ${{ secrets.PORT }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.SSH_PASSWORD }}
           source: main
           target: /var/www/myapp/main
 
@@ -53,7 +57,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           port: ${{ secrets.PORT }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.SSH_PASSWORD }}
           script: |
             sudo systemctl restart myapp
             sudo systemctl status myapp
