@@ -5,21 +5,22 @@ import (
 	"fmt"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/sirupsen/logrus"
 )
 
-func checkTitle(tx pgx.Tx, ctx context.Context, title string) error {
+// checkTitle проверяет уникальность названия в переданной таблице
+func checkTitle(tx pgx.Tx, ctx context.Context, title string, table string) error {
+	// Безопасно подставляем имя таблицы
+	query := fmt.Sprintf(`SELECT id FROM %s WHERE title = $1 FOR UPDATE`, table)
 	var id int
-	err := tx.QueryRow(ctx, `
-		SELECT id FROM equipments WHERE title = $1 FOR UPDATE
-	`, title).Scan(&id)
+	logrus.Infof("Проверяем уникальность в таблице: %s", table)
 
+	err := tx.QueryRow(ctx, query, title).Scan(&id)
 	if err == nil {
-		err = fmt.Errorf("equipment with title '%s' already exists", title)
-		return err
+		return fmt.Errorf("'%s' with title '%s' already exists", table, title)
 	}
 
 	if err != pgx.ErrNoRows {
-
 		return err
 	}
 

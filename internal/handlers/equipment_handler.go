@@ -85,7 +85,7 @@ func (h *EquipmentHandler) CreateEqipment(c echo.Context) error {
 	})
 }
 
-func (h *EquipmentHandler) RemoveEquipment(c echo.Context) error {
+func (h *EquipmentHandler) DeleteEquipment(c echo.Context) error {
 	ctx := context.Background()
 	id, err := strconv.Atoi(c.Param("id"))
 

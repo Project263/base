@@ -9,6 +9,8 @@ import (
 	"theaesthetics.ru/base/internal/models"
 )
 
+const tableNameEquipments = "equipments"
+
 type EquipmentRepository struct {
 	db *pgxpool.Pool
 }
@@ -44,7 +46,6 @@ func (r *EquipmentRepository) GetEquipmentById(ctx context.Context, id uint8) (*
 	err := row.Scan(&equipment.Id, &equipment.Title, &equipment.Image)
 
 	if err != nil {
-		logrus.Error(err)
 		return nil, err
 	}
 
@@ -54,21 +55,18 @@ func (r *EquipmentRepository) GetEquipmentById(ctx context.Context, id uint8) (*
 func (r *EquipmentRepository) CreateEqipment(ctx context.Context, title, image string) error {
 	tx, err := r.db.Begin(ctx)
 	if err != nil {
-		logrus.Error()
 		return err
 	}
 	defer tx.Rollback(ctx)
 
-	err = checkTitle(tx, ctx, title)
+	err = checkTitle(tx, ctx, title, tableNameEquipments)
 	if err != nil {
-		logrus.Error(err)
 		return err
 	}
 
 	query := `INSERT INTO equipments (title, image) VALUES ($1, $2)`
 	_, err = r.db.Exec(ctx, query, title, image)
 	if err != nil {
-		logrus.Error(err)
 		return err
 	}
 
@@ -80,11 +78,10 @@ func (r *EquipmentRepository) CreateEqipment(ctx context.Context, title, image s
 	return nil
 }
 
-func (r *EquipmentRepository) RemoveEquipment(ctx context.Context, id uint8) error {
+func (r *EquipmentRepository) DeleteEquipment(ctx context.Context, id uint8) error {
 	query := `DELETE FROM equipments WHERE id = $1`
 	_, err := r.db.Exec(ctx, query, id)
 	if err != nil {
-		logrus.Error(err)
 		return err
 	}
 
@@ -99,16 +96,14 @@ func (r *EquipmentRepository) UpdateEquipment(ctx context.Context, equipment mod
 	}
 	defer tx.Rollback(ctx)
 
-	err = checkTitle(tx, ctx, equipment.Title)
+	err = checkTitle(tx, ctx, equipment.Title, tableNameEquipments)
 	if err != nil {
-		logrus.Error(err)
 		return err
 	}
 
 	query := `UPDATE equipments SET title = $1, image = $2 WHERE id = $3`
 	_, err = r.db.Exec(ctx, query, equipment.Title, equipment.Image, equipment.Id)
 	if err != nil {
-		logrus.Error(err)
 		return err
 	}
 
