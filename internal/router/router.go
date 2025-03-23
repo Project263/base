@@ -37,4 +37,5 @@ func InitRouter(e *echo.Echo, db *pgxpool.Pool) {
 
 	api.GET("/trains", trHandler.GetAllTrains)
 	api.POST("/train", trHandler.CreateTrain)
+	api.GET("/trains/:id", trHandler.GetTrainById)
 }

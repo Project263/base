@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
@@ -21,6 +22,24 @@ func NewTrainHandler(service *services.TrainService) *TrainHandler {
 func (h *TrainHandler) GetAllTrains(c echo.Context) error {
 	ctx := context.Background()
 	trains, err := h.service.GetAllTrains(ctx)
+	if err != nil {
+		logrus.WithError(err).Error("Failed to get trains")
+		return respondWithError(c, http.StatusInternalServerError, err)
+	}
+
+	return c.JSON(http.StatusOK, trains)
+}
+
+func (h *TrainHandler) GetTrainById(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logrus.WithError(err).Error("Failed to get trains")
+		return respondWithError(c, http.StatusBadRequest, err)
+	}
+	uid := uint8(id)
+
+	ctx := context.Background()
+	trains, err := h.service.GetTrainById(ctx, uid)
 	if err != nil {
 		logrus.WithError(err).Error("Failed to get trains")
 		return respondWithError(c, http.StatusInternalServerError, err)

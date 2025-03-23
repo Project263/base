@@ -22,3 +22,7 @@ func (s *TrainService) CreateTrain(ctx context.Context, train models.Train) erro
 func (s *TrainService) GetAllTrains(ctx context.Context) ([]models.TrainWithMuscle, error) {
 	return s.repo.GetAllTrains(ctx)
 }
+
+func (s *TrainService) GetTrainById(ctx context.Context, id uint8) (models.TrainWithMuscle, error) {
+	return s.repo.GetTrainById(ctx, id)
+}

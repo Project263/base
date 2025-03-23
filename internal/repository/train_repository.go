@@ -49,6 +49,30 @@ func (r *TrainsRepository) GetAllTrains(ctx context.Context) ([]models.TrainWith
 	return trains, nil
 }
 
+func (r *TrainsRepository) GetTrainById(ctx context.Context, id uint8) (models.TrainWithMuscle, error) {
+	query := `
+		SELECT 
+		trains.id, trains.title, description, trains.image,
+		Video_url, difficult, duration_time, 
+		muscles.id, muscles.title,muscles.image
+		FROM trains
+		JOIN muscles ON muscles.id = trains.lead_muscle_id
+		WHERE trains.id = $1
+	`
+	var train models.TrainWithMuscle
+
+	row := r.db.QueryRow(ctx, query, id)
+	err := row.Scan(&train.Id, &train.Title, &train.Description, &train.Image,
+		&train.Video_url, &train.Difficult, &train.Duration_time, &train.Muscles.Id,
+		&train.Muscles.Title, &train.Muscles.Image)
+
+	if err != nil {
+		return models.TrainWithMuscle{}, err
+	}
+
+	return train, nil
+}
+
 func (r *TrainsRepository) CreateTrain(ctx context.Context, train models.Train) error {
 	tx, err := r.db.Begin(ctx)
 	if err != nil {
