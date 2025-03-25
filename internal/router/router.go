@@ -21,6 +21,16 @@ func InitRouter(e *echo.Echo, db *pgxpool.Pool) {
 	api.PUT("/equipment/:id", eqHandler.UpdateEqipment)
 	api.DELETE("/equipment/:id", eqHandler.DeleteEquipment)
 
+	ahRepo := repository.NewAchievementsRepository(db)
+	ahService := services.NewAchievementsService(ahRepo)
+	ahHandler := handlers.NewAhievementsHandler(ahService)
+
+	api.GET("/ahievements", ahHandler.GetAllAchievements)
+	api.POST("/ahievements", ahHandler.CreateAchievement)
+	api.GET("/ahievements/:id", ahHandler.GetAchievementById)
+	api.PUT("/ahievements/:id", ahHandler.UpdateAchievement)
+	api.DELETE("/ahievements/:id", ahHandler.DeleteAchievement)
+
 	msRepo := repository.NewMusclesRepository(db)
 	msService := services.NewMusclesService(msRepo)
 	msHandler := handlers.NewMusclesHandler(msService)
@@ -38,4 +48,23 @@ func InitRouter(e *echo.Echo, db *pgxpool.Pool) {
 	api.GET("/trains", trHandler.GetAllTrains)
 	api.POST("/train", trHandler.CreateTrain)
 	api.GET("/trains/:id", trHandler.GetTrainById)
+
+	exRepo := repository.NewExercisesRepository(db)
+	exService := services.NewExercisesService(exRepo)
+	exHandler := handlers.NewExerciseHandler(exService)
+
+	api.GET("/exercises", exHandler.GetAllExercises)
+	api.POST("/exercises", exHandler.CreateExercise)
+	api.GET("/exercises/:id", exHandler.GetExerciseById)
+	api.PUT("/exercises/:id", exHandler.UpdateExercise)
+	api.DELETE("/exercises/:id", exHandler.DeleteExercise)
+
+	usRepo := repository.NewUserRepository(db)
+	usService := services.NewUserService(usRepo)
+	usHandler := handlers.NewUserHandler(usService)
+
+	api.GET("/users", usHandler.GetAllUsers)
+	api.GET("/users/:id", usHandler.GetUserById)
+	api.GET("/users/:id/achievements", usHandler.GetUserAchievements)
+
 }

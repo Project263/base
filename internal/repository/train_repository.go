@@ -89,7 +89,7 @@ func (r *TrainsRepository) CreateTrain(ctx context.Context, train models.Train) 
 	}
 
 	query := `INSERT INTO trains (title, description, image, video_url, difficult, duration_time, lead_muscle_id) VALUES ($1, $2, $3, $4, $5, $6, $7)`
-	_, err = r.db.Exec(ctx, query, train.Title, train.Description, train.Image, train.Video_url, train.Difficult, train.Duration_time, train.Lead_muscle_id)
+	_, err = tx.Exec(ctx, query, train.Title, train.Description, train.Image, train.Video_url, train.Difficult, train.Duration_time, train.Lead_muscle_id)
 	if err != nil {
 		return err
 	}
