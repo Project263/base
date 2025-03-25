@@ -65,4 +65,6 @@ func InitRouter(e *echo.Echo, db *pgxpool.Pool) {
 
 	api.GET("/users", usHandler.GetAllUsers)
 	api.GET("/users/:id", usHandler.GetUserById)
+	api.GET("/users/:id/achievements", usHandler.GetUserAchievements)
+
 }

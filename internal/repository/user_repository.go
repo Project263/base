@@ -21,7 +21,7 @@ func (r *UserRepository) GetAllUsers(ctx context.Context) ([]models.User, error)
 			id, login, nickname, COALESCE(avatar, '') AS avatar, advanced_version, 
 			COALESCE(phone, '') AS phone, is_verified_phone, email, is_verified_mail, 
 			COALESCE(age, 0) AS age, COALESCE(height, 0) AS height, COALESCE(weight, 0) AS weight, 
-			COALESCE(sex, '') AS sex, day_streak, is_train_today, points, created_at, updated_at
+			COALESCE(sex, '') AS sex, day_streak, is_train_today, points, created_at, update_at
 		FROM users
 	`
 
@@ -57,7 +57,7 @@ func (r *UserRepository) GetUserById(ctx context.Context, id uint) (models.User,
 			id, login, nickname, COALESCE(avatar, '') AS avatar, advanced_version, 
 			COALESCE(phone, '') AS phone, is_verified_phone, email, is_verified_mail, 
 			COALESCE(age, 0) AS age, COALESCE(height, 0) AS height, COALESCE(weight, 0) AS weight, 
-			COALESCE(sex, '') AS sex, day_streak, is_train_today, points, created_at, updated_at
+			COALESCE(sex, '') AS sex, day_streak, is_train_today, points, created_at, update_at
 		FROM users
 		WHERE id = $1
 	`
@@ -76,4 +76,37 @@ func (r *UserRepository) GetUserById(ctx context.Context, id uint) (models.User,
 	}
 
 	return user, nil
+}
+
+func (r *UserRepository) GetUserAchievements(ctx context.Context, userId uint) ([]models.Achievenment, error) {
+	query := `
+		SELECT 
+			achievements.id, 
+			achievements.title, 
+			achievements.description, 
+			achievements.image, 
+		FROM achievements
+		JOIN user_achievements ON user_achievements.achievement_id = achievements.id
+		WHERE user_achievements.user_id = $1
+	`
+
+	var achievements []models.Achievenment
+
+	rows, err := r.db.Query(ctx, query, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var achievement models.Achievenment
+		err := rows.Scan(&achievement.Id, &achievement.Title, &achievement.Description, &achievement.Image)
+		if err != nil {
+			return nil, err
+		}
+
+		achievements = append(achievements, achievement)
+	}
+
+	return achievements, nil
 }

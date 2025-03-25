@@ -46,3 +46,21 @@ func (h *UserHandler) GetUserById(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, user)
 }
+
+func (h *UserHandler) GetUserAchievements(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logrus.WithError(err).Error("Invalid user ID")
+		return respondWithError(c, http.StatusBadRequest, err)
+	}
+	uid := uint(id)
+
+	ctx := context.Background()
+	achievements, err := h.service.GetUserAchievements(ctx, uid)
+	if err != nil {
+		logrus.WithError(err).Error("Failed to get achievements")
+		return respondWithError(c, http.StatusInternalServerError, err)
+	}
+
+	return c.JSON(http.StatusOK, achievements)
+}
