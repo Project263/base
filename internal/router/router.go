@@ -21,6 +21,16 @@ func InitRouter(e *echo.Echo, db *pgxpool.Pool) {
 	api.PUT("/equipment/:id", eqHandler.UpdateEqipment)
 	api.DELETE("/equipment/:id", eqHandler.DeleteEquipment)
 
+	ahRepo := repository.NewAchievementsRepository(db)
+	ahService := services.NewAchievementsService(ahRepo)
+	ahHandler := handlers.NewAhievementsHandler(ahService)
+
+	api.GET("/ahievements", ahHandler.GetAllAchievements)
+	api.POST("/ahievements", ahHandler.CreateAchievement)
+	api.GET("/ahievements/:id", ahHandler.GetAchievementById)
+	api.PUT("/ahievements/:id", ahHandler.UpdateAchievement)
+	api.DELETE("/ahievements/:id", ahHandler.DeleteAchievement)
+
 	msRepo := repository.NewMusclesRepository(db)
 	msService := services.NewMusclesService(msRepo)
 	msHandler := handlers.NewMusclesHandler(msService)
