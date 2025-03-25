@@ -14,14 +14,17 @@ type Exercises struct {
 }
 
 type FullExercises struct {
-	Id             uint8     `json:"id"`
-	Title          string    `json:"title"`
-	Image          string    `json:"image"`
-	Description    string    `json:"descripton"`
-	Video_url      string    `json:"video_url"`
-	EquipmentId    Equipment `json:"equipment"`
-	Sets           uint8     `json:"sets"`
-	Reps           uint8     `json:"reps"`
-	Difficult      uint8     `json:"difficult"`
-	Lead_muscle_id Muscles   `json:"muscle"`
+	Id    uint8  `json:"id"`
+	Title string `json:"title"`
+
+	Image       string `json:"image"`
+	Description string `json:"descripton"`
+	Video_url   string `json:"video_url"`
+
+	Sets      uint8 `json:"sets"`
+	Reps      uint8 `json:"reps"`
+	Difficult uint8 `json:"difficult"`
+
+	Equipment Equipment `json:"equipment"`
+	Muscles   Muscles   `json:"muscle"`
 }
