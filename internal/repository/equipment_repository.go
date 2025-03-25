@@ -102,7 +102,7 @@ func (r *EquipmentRepository) UpdateEquipment(ctx context.Context, equipment mod
 	}
 
 	query := `UPDATE equipments SET title = $1, image = $2 WHERE id = $3`
-	_, err = r.db.Exec(ctx, query, equipment.Title, equipment.Image, equipment.Id)
+	_, err = tx.Exec(ctx, query, equipment.Title, equipment.Image, equipment.Id)
 	if err != nil {
 		return err
 	}

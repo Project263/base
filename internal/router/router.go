@@ -58,4 +58,11 @@ func InitRouter(e *echo.Echo, db *pgxpool.Pool) {
 	api.GET("/exercises/:id", exHandler.GetExerciseById)
 	api.PUT("/exercises/:id", exHandler.UpdateExercise)
 	api.DELETE("/exercises/:id", exHandler.DeleteExercise)
+
+	usRepo := repository.NewUserRepository(db)
+	usService := services.NewUserService(usRepo)
+	usHandler := handlers.NewUserHandler(usService)
+
+	api.GET("/users", usHandler.GetAllUsers)
+	api.GET("/users/:id", usHandler.GetUserById)
 }
