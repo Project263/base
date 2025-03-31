@@ -5,6 +5,8 @@ import (
 	"base/internal/database"
 	"base/internal/logger"
 	"context"
+
+	"github.com/labstack/echo/v4"
 )
 
 func main() {
@@ -19,6 +21,9 @@ func main() {
 	// init database
 	database.ConnectDB(cfg, ctx)
 	// init echo
+	e := echo.New()
+
+	e.Logger.Fatal(e.Start(":3000"))
 
 	// graceful shotdown
 }
