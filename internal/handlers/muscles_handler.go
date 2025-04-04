@@ -140,19 +140,10 @@ func (h *MusclesHandler) DeleteMuscles(c echo.Context) error {
 
 func (h *MusclesHandler) UpdateMuscles(c echo.Context) error {
 	ctx := context.Background()
-	id, err := strconv.Atoi(c.Param("id"))
+	id := c.Param("id")
 
-	if err != nil {
-		logrus.Error(err)
-
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"error": err.Error(),
-		})
-	}
-	uid := uint8(id)
-
-	Muscles := models.Muscle{Id: uid}
-	err = c.Bind(&Muscles)
+	Muscles := models.Muscle{Id: id}
+	err := c.Bind(&Muscles)
 
 	if err != nil {
 		logrus.Error(err)
