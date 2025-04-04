@@ -4,6 +4,7 @@ import (
 	"base/config"
 	"base/internal/database"
 	"base/internal/logger"
+	"base/internal/middlewares"
 	"base/internal/router"
 	"context"
 
@@ -24,6 +25,9 @@ func main() {
 
 	// init echo
 	e := echo.New()
+
+	aMiddleware := middlewares.NewAuthMiddleware(cfg)
+	e.Use(aMiddleware.CheckAuthToken)
 
 	router.InitRouter(e, pool)
 	e.Logger.Fatal(e.Start(":3000"))
