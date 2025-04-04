@@ -22,7 +22,7 @@ func (s *TrainsService) GetTrainById(ctx context.Context, id string) (*models.Tr
 	return s.repo.GetTrainById(ctx, id)
 }
 
-func (s *TrainsService) CreateTrain(ctx context.Context, title, description, image, videoUrl, muscleId string) error {
+func (s *TrainsService) CreateTrain(ctx context.Context, title, description, image, videoUrl string, muscleId int) error {
 	return s.repo.CreateTrain(ctx, title, description, image, videoUrl, muscleId)
 }
 

@@ -103,7 +103,7 @@ func (r *TrainsRepository) GetTrainById(ctx context.Context, id string) (*models
 	return train, nil
 }
 
-func (r *TrainsRepository) CreateTrain(ctx context.Context, title, description, image, videoUrl string, muscleId string) error {
+func (r *TrainsRepository) CreateTrain(ctx context.Context, title, description, image, videoUrl string, muscleId int) error {
 	tx, err := r.db.Begin(ctx)
 	if err != nil {
 		return err

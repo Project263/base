@@ -30,7 +30,7 @@ func main() {
 	e.Use(aMiddleware.CheckAuthToken)
 
 	router.InitRouter(e, pool)
-	e.Logger.Fatal(e.Start(":3000"))
+	e.Logger.Fatal(e.Start(":8080"))
 
 	// graceful shotdown
 }
