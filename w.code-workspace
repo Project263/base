@@ -5,6 +5,12 @@
 		},
 		{
 			"path": "../auth-service"
+		},
+		{
+			"path": "../front"
+		},
+		{
+			"path": "../project"
 		}
 	],
 	"settings": {}
